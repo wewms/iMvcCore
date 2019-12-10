@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Data;
 using System.Data.SqlClient;
-using iMvcCore.Extensions;
 using Microsoft.Extensions.Options;
 
 namespace iMvcCore.Database
@@ -11,10 +10,10 @@ namespace iMvcCore.Database
         public Database(IOptions<DatabaseOptions> databaseOptions)
         {
             var options = databaseOptions.Value;
-            if (options == null || string.IsNullOrEmpty(options.DefaultConnection)) throw new ArgumentNullException(nameof(options.DefaultConnection));
-            
-            Current = new SqlConnection(options.DefaultConnection.Decrypt(options.Key));
-            if (Current.State != ConnectionState.Open)
+            if(options == null || string.IsNullOrEmpty(options.DefaultConnection)) throw new ArgumentNullException(nameof(options.DefaultConnection));
+
+            Current = new SqlConnection(options.DefaultConnection);
+            if(Current.State != ConnectionState.Open)
             {
                 Current.Open();
             }
@@ -25,7 +24,7 @@ namespace iMvcCore.Database
 
         public void Dispose()
         {
-            if (Current.State != ConnectionState.Closed)
+            if(Current.State != ConnectionState.Closed)
             {
                 Current.Close();
             }

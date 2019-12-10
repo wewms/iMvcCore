@@ -8,7 +8,5 @@
         public string Connection3 { get; set; }
         public string Connection4 { get; set; }
         public string Connection5 { get; set; }
-
-        public string Key { get; set; }
     }
 }
