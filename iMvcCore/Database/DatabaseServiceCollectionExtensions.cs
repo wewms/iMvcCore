@@ -1,6 +1,4 @@
-﻿using System;
-using System.Security.Cryptography;
-using System.Text;
+﻿using iMvcCore.Extensions;
 using iMvcCore.Utils;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,41 +23,12 @@ namespace iMvcCore.Database
             // Decrypts database connection string
             var rsa = X509.GetRSAPrivateKey(configuration.GetValue<string>(X509.CertFileName), configuration.GetValue<string>(X509.CertFileKey));
             services.Configure<DatabaseOptions>(options => {
-                if(!string.IsNullOrEmpty(options.DefaultConnection))
-                {
-                    var bytes = Convert.FromBase64String(options.DefaultConnection);
-                    options.DefaultConnection = Encoding.UTF8.GetString(rsa.Decrypt(bytes, RSAEncryptionPadding.OaepSHA256));
-                }
-
-                if(!string.IsNullOrEmpty(options.Connection1))
-                {
-                    var bytes = Convert.FromBase64String(options.Connection1);
-                    options.Connection1 = Encoding.UTF8.GetString(rsa.Decrypt(bytes, RSAEncryptionPadding.OaepSHA256));
-                }
-
-                if(!string.IsNullOrEmpty(options.Connection2))
-                {
-                    var bytes = Convert.FromBase64String(options.Connection2);
-                    options.Connection2 = Encoding.UTF8.GetString(rsa.Decrypt(bytes, RSAEncryptionPadding.OaepSHA256));
-                }
-
-                if(!string.IsNullOrEmpty(options.Connection3))
-                {
-                    var bytes = Convert.FromBase64String(options.Connection3);
-                    options.Connection3 = Encoding.UTF8.GetString(rsa.Decrypt(bytes, RSAEncryptionPadding.OaepSHA256));
-                }
-
-                if(!string.IsNullOrEmpty(options.Connection4))
-                {
-                    var bytes = Convert.FromBase64String(options.Connection4);
-                    options.Connection4 = Encoding.UTF8.GetString(rsa.Decrypt(bytes, RSAEncryptionPadding.OaepSHA256));
-                }
-
-                if(!string.IsNullOrEmpty(options.Connection5))
-                {
-                    var bytes = Convert.FromBase64String(options.Connection5);
-                    options.Connection5 = Encoding.UTF8.GetString(rsa.Decrypt(bytes, RSAEncryptionPadding.OaepSHA256));
-                }
+                if(!string.IsNullOrEmpty(options.DefaultConnection)) options.DefaultConnection = rsa.Decrypt(options.DefaultConnection);
+                if(!string.IsNullOrEmpty(options.Connection1)) options.Connection1 = rsa.Decrypt(options.Connection1);
+                if(!string.IsNullOrEmpty(options.Connection2)) options.Connection2 = rsa.Decrypt(options.Connection2);
+                if(!string.IsNullOrEmpty(options.Connection3)) options.Connection3 = rsa.Decrypt(options.Connection3);
+                if(!string.IsNullOrEmpty(options.Connection4)) options.Connection4 = rsa.Decrypt(options.Connection4);
+                if(!string.IsNullOrEmpty(options.Connection5)) options.Connection5 = rsa.Decrypt(options.Connection5);
             });
 
             return services;
