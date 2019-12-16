@@ -1,8 +1,7 @@
 ﻿using System;
-using System.IO;
 using System.Security.Cryptography;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using iMvcCore.Utils;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -10,9 +9,6 @@ namespace iMvcCore.Database
 {
     public static class DatabaseServiceCollectionExtensions
     {
-        private const string CertFileName = "DBCertFile";
-        private const string CertFileKey = "DBCertKey";
-
         public static IServiceCollection AddDatabase(this IServiceCollection services, IConfiguration configuration)
         {
             // Registers databases
@@ -27,7 +23,7 @@ namespace iMvcCore.Database
             services.Configure<DatabaseOptions>(configuration);
 
             // Decrypts database connection string
-            var rsa = GetRsa(configuration.GetValue<string>(CertFileName), configuration.GetValue<string>(CertFileKey));
+            var rsa = X509.GetRSAPrivateKey(configuration.GetValue<string>(X509.CertFileName), configuration.GetValue<string>(X509.CertFileKey));
             services.Configure<DatabaseOptions>(options => {
                 if(!string.IsNullOrEmpty(options.DefaultConnection))
                 {
@@ -67,16 +63,6 @@ namespace iMvcCore.Database
             });
 
             return services;
-        }
-
-        private static RSA GetRsa(string certFileName, string certFileKey)
-        {
-            var cert = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Certs", certFileName);
-            if(!File.Exists(cert)) throw new FileNotFoundException($"{cert}");
-            if(string.IsNullOrEmpty(certFileKey)) throw new ArgumentNullException($"{nameof(certFileKey)}");
-
-            var x509 = new X509Certificate2(cert, certFileKey);
-            return x509.GetRSAPrivateKey();
         }
     }
 }
