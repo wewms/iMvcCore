@@ -7,8 +7,8 @@ namespace iMvcCore.Utils
 {
     public static class X509
     {
-        public const string CertFileName = "CertFile";
-        public const string CertFileKey = "CertKey";
+        public const string CertFileName = "CertFileName";
+        public const string CertFileKey = "CertFileKey";
 
         public static RSA GetRSAPrivateKey(string certFileName, string certFileKey)
         {
